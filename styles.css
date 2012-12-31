@@ -1,0 +1,170 @@
+#self{ }
+
+#spouse,
+#x {
+display: none;
+}
+#parents,
+#grandparents,
+#gr_grandparents {
+  display: none;
+}
+#parents p,
+#grandparents p,
+#gr_ggrandparents p,
+#spouse p,
+#self p {
+  font-weight: bold;
+}
+#register fieldset {
+	width: 100%;
+}
+
+#register legend {
+  font-weight: bold;
+  font-style: italic;
+  font-size: 1.1em;
+}
+
+#register table {
+	width: 100%;
+}
+#register td {
+	width: auto;
+}
+
+#register td.input {
+	width: 20%;
+}
+
+#register td.label {
+	width: 100px;
+}
+
+#register option {
+	width: 200px;
+}
+
+#success_message { border: 1px solid #000; width: 550px; text-align: left; padding: 10px 7px; background: #33ff33; color: #000; font-weight; bold; font-size: 1.2em; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; }
+
+
+.note { font-size: 18px; }
+
+/* Validation */
+
+#register .valid input{ color: #080; font-weight: bold; border-color: #080; }
+#userlogin .valid input, #user_email .valid input{ border: 1px solid #080; color: #080; }
+#register .error input { color: #800; font-weight: bold; border: 1px solid #800;}
+#register .error { color: #800; font-weight: bold; }
+#userlogin .error input, #user_email .error input { border-color: #800;}
+
+#tick, #cross, #tick2, #cross2 {display:none;}
+
+#passwordDescription { font-size: 10px; }
+#passwordStrength
+{
+	height:10px;
+	display:block;
+	float:left;
+}
+
+.strength0
+{
+	width:150px;
+	background:#cccccc;
+}
+
+.strength1
+{
+	width:30px;
+	background:#ff0000;
+}
+
+.strength2
+{
+	width:50px;	
+	background:#ff5f5f;
+}
+
+.strength3
+{
+	width:80px;
+	background:#56e500;
+}
+
+.strength4
+{
+	background:#4dcd00;
+	width:120px;
+}
+
+.strength5
+{
+	background:#399800;
+	width:150px;
+}
+
+/* Profile */
+#your-profile { }
+#your-profile label { font-weight: bold; font-size: 1.1em; }
+
+#your-profile  td.name { width: 50%; }
+#your-profile .name input { display: block; }
+.error { font-weight: bold; color: #900; }
+#your-profile .description { font-weight: normal !important; font-size: 98%; color: #000; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#msgbox{
+	font-size: .95em;
+	font-weight: bold;
+}
+#msgbox.messagebox {
+	position:absolute;
+	margin-left:30px;
+	border:1px solid #c93;
+	background:#ffc;
+	padding:3px;
+	line-height: 1.2em;
+}
+#msgbox.messageboxok {
+	position:absolute;
+	margin-left:30px;
+	border:1px solid #349534;
+	background:#C9FFCA;
+	padding:3px;
+	font-weight:bold;
+	color:#008000;
+	
+}
+#msgbox.messageboxerror {
+	position:absolute;
+	margin-left:30px;
+	border:1px solid #CC0000;
+	background:#F7CBCA;
+	padding:3px;
+	font-weight:bold;
+	color:#CC0000;
+}
