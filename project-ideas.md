@@ -36,6 +36,7 @@
 		* class-registration.php
 		* class-profile.php
 		* class-tng-db.php
+                * class-utilities.php
 	* /admin
 		* class-settings.php
 	* /css
