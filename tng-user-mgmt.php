@@ -1,12 +1,12 @@
 <?php
 
 /**
- *	Plugin Name:   TNG User Management
+ *  Plugin Name:   TNG User Management
  *  Plugin URI:    http://heatherfeuer.github.com/TNG_User_Meta/
- *	Description:   Manage your TNG and WordPress users all from WordPress. The plugin provides shortcodes for custom registration and a front-end user profile page. 
- *	Version: 	   2.0
- *	Date:		   1/4/13
- *	Author:        Heather Feuerhelm, Nate Jacobs <natejacobs.org>
+ *  Description:   Manage your TNG and WordPress users all from WordPress. The plugin provides shortcodes for custom registration and a front-end user profile page. 
+ *  Version: 	   2.0
+ *  Date:	   1/4/13
+ *  Author:        Heather Feuerhelm, Nate Jacobs <natejacobs.org>
  *  Author URI:    http://uniquelyyours.blogdns.com
  */
  
