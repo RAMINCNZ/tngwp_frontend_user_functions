@@ -5,8 +5,8 @@
  *  Plugin URI:    http://heatherfeuer.github.com/TNG_User_Meta/
  *  Description:   Manage your TNG and WordPress users all from WordPress. The plugin provides shortcodes for custom registration and a front-end user profile page. 
  *  Version: 	   2.0
- *  Date:	   1/4/13
- *  Author:        Heather Feuerhelm, Nate Jacobs <natejacobs.org>
+ *  Date:          1/4/13
+ *  Author:        Heather Feuerhelm
  *  Author URI:    http://uniquelyyours.blogdns.com
  */
  
@@ -134,7 +134,19 @@ class TNGUserMgmt
 	*/
 	public function activation()
 	{
-		
+		// checking if plugin is inactive or not installed.
+		if( is_plugin_inactive( 'tng-wordpress-plugin/tng.php' ) )
+		{
+			// okay, tng-wp plugin is here
+			// get the data from the plugin file
+			$plugin_data = get_plugin_data( __FILE__, false );
+			
+			// deactivate this plugin
+			deactivate_plugins( plugin_basename( __FILE__ ) );
+			
+			// let the user know to install or activate the tng-wp integration plugin
+			wp_die( "<strong>".$plugin_data['Name']." version ".$plugin_data['Version']."</strong> requires the <a href='http://wordpress.org/extend/plugins/tng-wordpress-plugin/'>TNG WordPress Integration plugin</a> to be activated. ".$plugin_data['Name']." has been deactivated. Please install and activate the Integration plugin and try again.", 'TNG User Management Activation Error', array( 'back_link' => true ) );
+		}
 	}
 	
 	/** 
