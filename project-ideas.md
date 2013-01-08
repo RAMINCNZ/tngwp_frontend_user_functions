@@ -2,7 +2,8 @@
 ## Features
 * Sync users with TNG
 * Custom registration fields to match user fields in TNG
-* Add users through WordPress
+* Add users and set TNG privileges through WordPress.
+	* Create a submenu page under Users in WordPress to activate in TNG
 * Select relative from TNG during registration
 
 ## Development 
