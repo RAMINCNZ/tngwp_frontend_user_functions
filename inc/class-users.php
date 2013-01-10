@@ -7,7 +7,7 @@
 *
 *	@author		Nate Jacobs
 *	@date		1/8/13
-*	@since		1.0
+*	@since		2.0
 */
 class TNGUsers
 {
@@ -18,7 +18,7 @@ class TNGUsers
 	*
 	*	@author		Nate Jacobs
 	*	@date		1/8/13
-	*	@since		1.0
+	*	@since		2.0
 	*
 	*	@param		
 	*/
@@ -34,7 +34,7 @@ class TNGUsers
 	*
 	*	@author		Nate Jacobs
 	*	@date		1/8/13
-	*	@since		1.0
+	*	@since		2.0
 	*
 	*	@param		
 	*/
@@ -50,7 +50,7 @@ class TNGUsers
 	*
 	*	@author		Nate Jacobs
 	*	@date		1/8/13
-	*	@since		1.0
+	*	@since		2.0
 	*
 	*	@param		
 	*/
@@ -66,7 +66,7 @@ class TNGUsers
 	*
 	*	@author		Nate Jacobs
 	*	@date		1/8/13
-	*	@since		1.0
+	*	@since		2.0
 	*
 	*	@param		
 	*/
