@@ -9,6 +9,8 @@
  *  Author:        Heather Feuerhelm
  *  Author URI:    http://uniquelyyours.blogdns.com
  */
+
+// Additional code by Nate Jacobs, http://natejacobs.org
  
 TNGUserMgmt::init(); 
 
@@ -98,6 +100,7 @@ class TNGUserMgmt
 		require_once( TNGUSERMGMT_INCLUDES . 'class-registration.php' );
 		require_once( TNGUSERMGMT_INCLUDES . 'class-utilities.php' );
 		require_once( TNGUSERMGMT_INCLUDES . 'class-profile.php' );
+		require_once( TNGUSERMGMT_INCLUDES . 'class-users.php' );
 	}
 	
 	/**
@@ -117,6 +120,7 @@ class TNGUserMgmt
 		if ( is_admin() ) 
 		{
 			require_once( TNGUSERMGMT_ADMIN . 'class-settings.php' );
+			require_once( TNGUSERMGMT_ADMIN . 'class-user-profile.php' );
 		}
 	}
 	
@@ -137,8 +141,13 @@ class TNGUserMgmt
 		// checking if plugin is inactive or not installed.
 		if( is_plugin_inactive( 'tng-wordpress-plugin/tng.php' ) )
 		{
+<<<<<<< HEAD
 			// okay, tng-wp plugin is missing
 			// get the data from the this plugin file
+=======
+			// okay, tng-wp plugin is not here
+			// get the data from the plugin file
+>>>>>>> Add new include and admin classes
 			$plugin_data = get_plugin_data( __FILE__, false );
 			
 			// deactivate this plugin
