@@ -141,13 +141,8 @@ class TNGUserMgmt
 		// checking if plugin is inactive or not installed.
 		if( is_plugin_inactive( 'tng-wordpress-plugin/tng.php' ) )
 		{
-<<<<<<< HEAD
 			// okay, tng-wp plugin is missing
-			// get the data from the this plugin file
-=======
-			// okay, tng-wp plugin is not here
 			// get the data from the plugin file
->>>>>>> Add new include and admin classes
 			$plugin_data = get_plugin_data( __FILE__, false );
 			
 			// deactivate this plugin
