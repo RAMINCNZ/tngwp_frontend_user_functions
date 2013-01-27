@@ -9,6 +9,7 @@ Please note that this plugin requires [The Next Generation of Genealogy Sitebuil
 ## Installation
 
 * Download the zip file to your computer.
+* Rename to tng_user_meta
 * In Plugins --> Add New, select 'upload,' browse to the file you downloaded and click on 'Install Now.'
 * Activate the plugin through the 'Plugins' menu in WordPress
 
