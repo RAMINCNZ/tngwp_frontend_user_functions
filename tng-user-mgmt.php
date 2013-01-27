@@ -151,6 +151,64 @@ class TNGUserMgmt
 			// let the user know to install or activate the tng-wp integration plugin
 			wp_die( "<strong>".$plugin_data['Name']." version ".$plugin_data['Version']."</strong> requires the <a href='http://wordpress.org/extend/plugins/tng-wordpress-plugin/'>TNG WordPress Integration plugin</a> to be activated. ".$plugin_data['Name']." has been deactivated. Please install and activate the Integration plugin and try again.", 'TNG User Management Activation Error', array( 'back_link' => true ) );
 		}
+		
+		// get the path from TNG/WP Plugin
+		$tng_path = get_option( 'mbtng_path' );
+		
+		// is it there?
+		if( empty( $tng_path ) )
+		{
+			// no, okay then run our path check
+			$path = self::get_tng_path();
+
+			// if the path is not empty, add option to db
+			if( !empty( $path ) )
+			{
+				update_option( 'mbtng_path', $path );
+			}
+		}
+	}
+	
+	/** 
+	*	Get TNG Path
+	*
+	*	Iterates through directory looking for three files present in the TNG install.
+	*	If the three files are present and have the same path, the TNG file path is saved to the plugin options.
+	*
+	*	@author		Nate Jacobs
+	*	@date		1/26/13
+	*	@since		2.0
+	*
+	*	@param		
+	*/
+	public function get_tng_path()
+	{
+		// get the directory above the WordPress install
+		$path = dirname( ABSPATH );
+
+		// define options for recursive iterator
+		$directory = new RecursiveDirectoryIterator( $path,RecursiveDirectoryIterator::SKIP_DOTS );
+		$iterator = new RecursiveIteratorIterator( $directory,RecursiveIteratorIterator::LEAVES_ONLY );
+		
+		// define the files required for a TNG match
+		$req_files = array( "ahnentafel.php", "genlib.php", "admin_cemeteries.php" );
+		
+		// loop through all files returned from the search
+		foreach ( $iterator as $fileinfo ) 
+		{
+			// are the files defined above in the return, if so add them to an array
+		    if ( in_array( $fileinfo->getFilename(), $req_files ) ) 
+		    {
+		        $files[] = $fileinfo->getPath();
+		    }
+		}
+		
+		// after looping through all the files check and see if there are three files and they all have the identical path
+		if( count( $files ) == 3 && count( array_unique( $files ) ) == 1 )
+		{
+			// if they do, return the path
+			return trailingslashit( $files[0] );
+		}
 	}
 	
 	/** 
