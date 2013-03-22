@@ -574,7 +574,7 @@ function tng_user_meta_scripts() {
 	wp_enqueue_script('validate', plugins_url('tng_user_meta/js/jquery.validate.js'), 'jquery', '1.9', true);
 	wp_enqueue_script('validate-language', plugins_url('tng_user_meta/js/additional-methods.js'), 'jquery', '1.9', true);
 	wp_enqueue_script('qaptcha', plugins_url('tng_user_meta/js/QapTcha.jquery.js'), 'jquery', '', true);
-	wp_enqueue_script('qaptcha-ui', plugins_url('tng_user_meta/js/jquery-ui.js'), 'jquery', '2.5', true);
+	wp_enqueue_script( 'jquery-ui-draggable' );
 	wp_enqueue_script('qaptcha-ui-touch', plugins_url('tng_user_meta/js/jquery.ui.touch.js'), 'jquery', '', true);
 }
 ?>
