@@ -1,61 +1,55 @@
 <?php
 /************************************************
-Registration Form Handler for TNG/Wordpress Simple Registration
+Registration Form Handler for TNG Registration
 ************************************************/
-require_once('../../../wp-load.php');
+require('../../../../wp-load.php');
+global $wpdb;
 //Begin processing form data
-if ((isset($_POST['submit']))){
-extract($_POST);
-$first_name = ($_POST['first_name']);
-$last_name = stripslashes($_POST['last_name']);
-$city = stripslashes($_POST['city']);
-$state_prov = stripslashes($_POST['state_prov']);
-$postalcode = stripslashes($_POST['postalcode']);
-$country = stripslashes($_POST['country']);
-$user_url = stripslashes($_POST['user_url']);
-$user_login = stripslashes($_POST['userlogin']);
-$user_email = stripslashes($_POST['user_email']);
-$user_pass = stripslashes($_POST['user_pass']);
-$nickname = $_POST['first_name']." ".$_POST['last_name'];
-$real_name = $nickname;
-$mbtng_tree = $_POST['tree'];
-$interest = stripslashes($_POST['interest']);
-$relationship = stripslashes($_POST['relationship']);
-$comments = stripslashes($_POST['comments']);
+if ((isset($_POST['submit']))) {
+	extract($_POST);
+	//Grab the posted variables
+	$first_name = ($_POST['first_name']);
+	$last_name = stripslashes($_POST['last_name']);
+	$city = stripslashes($_POST['city']);
+	$state_prov = stripslashes($_POST['state_prov']);
+	$postalcode = stripslashes($_POST['postalcode']);
+	$country = stripslashes($_POST['country']);
+	$user_url = stripslashes($_POST['user_url']);
+	$user_login = stripslashes($_POST['userlogin']);
+	$user_email = stripslashes($_POST['user_email']);
+	$email = stripslashes($_POST['confirm_email']);
+	$user_pass = stripslashes($_POST['user_pass']);
+	$pass = md5($user_pass);
+	$mbtng_tree = stripslashes($_POST['tree']);
+	$interest = stripslashes($_POST['interest']);
+	$relationship = stripslashes($_POST['relationship']);
+	$comments = stripslashes($_POST['comments']);
 
-//Process emails
-$sendto_email = get_option('admin_email');
-$admin_mess = "Congratulations, Administrator! A new user joined your site.\n\n";
-$date = date("m-d-y, h:m");
-
-$info =
-	$real_name." has provided the following information:\n\n".
-	"My Full Name is ".$first_name." ".$last_name."\n".
-	"My Location is:\n".
-	$city.", ".$state_prov."  ".$postalcode." ".$country."\n\n".
-	"My Email is ".$user_email."\n\n".
-	"My Username is: ".$user_login." and my Password is: ".$user_pass.".\n\n
-	Additional notes:\n
-	Interest: ".$interest."\n
-	Relationship: ".$relationship."\n
-	Comments: ".$comments;
+	//Process emails
+	$sendto_email = get_option('admin_email');
+	$admin_mess = "Congratulations, Administrator! A new user joined your site.\n\n";
+	$date = date("m-d-y, h:m");
 	
-$admin_mess .= $info;
+	$info =
+		$real_name." has provided the following information:\n\n".
+		"My Full Name is ".$first_name." ".$last_name."\n".
+		"My Location is:\n".
+		$city.", ".$state_prov."  ".$postalcode." ".$country."\n\n".
+		"My Email is ".$user_email."\n\n".
+		"My Username is: ".$user_login." and my Password is: ".$user_pass.".\n\n
+		Additional notes:\n
+		Interest: ".$interest."\n
+		Relationship: ".$relationship."\n
+		Comments: ".$comments;
+	$admin_mess .= $info;
 
-	//echo "<meta http-equiv=\"location\" content=\"URL=uniquelyyours.blogdns.com/success?mess=1\" />";
-	$host  = $_SERVER['HTTP_HOST'];
-	$post_id = get_option('user_meta_success_page');
-	$post = get_post($post_id);
-	$page = $post->post_name;
 	//email new registration information to Admin
 	$senders_email = preg_replace("/[^a-zA-Z0-9s.@-]/", " ", $user_email);
 	$senders_name = preg_replace("/[^a-zA-Z0-9s]/", " ", $real_name);
 	$mail_subject = "New User Registration!";
 	$mailheaders = "From: $senders_name <$senders_email> \r\n";
-	$mail_message =
-	$date."\n".	
-	$admin_mess."\n";
-	@mail($sendto_email, $mail_subject, $mail_message, $mailheaders);
+	$mail_message = $date ."\n". $admin_mess."\n";
+	mail($sendto_email, $mail_subject, $mail_message, $mailheaders);
 
 	$usermessage = "Hello ".$real_name.",\n\n
 	Your request for a user account has been received.\n\n
@@ -66,12 +60,27 @@ $admin_mess .= $info;
 	Thank you for registering with us!\n";
 	$mailheaders2 = "From: ".get_option('blogname')." <$sendto_email> \r\n";
 	$defa = "Registration Information for ".get_option('blogname');
-
 	//email message to new user
-	@mail( $user_email, $defa, $usermessage, $mailheaders2 );
+	mail( $user_email, $defa, $usermessage, $mailheaders2 );
 }
-	wp_redirect( get_permalink( $post_id ) );
 
+$wpdb->query( $wpdb->prepare(
+    "INSERT INTO tng_users (description, username, password, password_type, role, allow_living, realname, email, dt_registered) VALUES ( %s, %s, %s, %s, %s, %d, %s, %s, %s )",
+    array(
+        $real_name,
+        $user_login,
+        $pass,
+		'md5',
+		'guest',
+		-1,
+		$real_name,
+		$user_email,
+		$date
+    )
+));
+$wpdb->flush();
+
+// Add the new user to WordPress
 $userdata = array (
 	'user_login' => $user_login,
 	'user_pass' => $user_pass,
@@ -91,6 +100,7 @@ $userdata = array (
 );
 $new_user_id = tng_meta_insert_user($userdata);
 
+//my function to create new WordPress user
 function tng_meta_insert_user($userdata) {
 	global $wpdb;
 
@@ -204,7 +214,7 @@ function tng_meta_insert_user($userdata) {
 	}
 
 	foreach(get_user_address_profile_list() as $key => $value) {
-	update_usermeta( $user_id, $key, $_POST[$key] );
+	update_user_meta( $user_id, $key, $_POST[$key] );
 	}
 
 	if ( isset($role) )
@@ -221,6 +231,13 @@ function tng_meta_insert_user($userdata) {
 		do_action('user_register', $user_id);
 
 	return $user_id;
+	$wpdb->flush();
 }
-?>
 
+//send user to success page
+	$host  = $_SERVER['HTTP_HOST'];
+	$options = get_option('tngwp-frontend-user-functions-options');
+	$page = $options['success_page'];
+	$permalink = get_permalink( get_page_by_title( $page ) );
+	wp_redirect( $permalink );
+?>

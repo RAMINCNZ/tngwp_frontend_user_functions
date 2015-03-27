@@ -1,5 +1,5 @@
 <?php
-function user_meta_simple_register() {
+function tngwp_simple_registration() {
 //	session_start();
 	ob_start();
 	?>
@@ -19,7 +19,7 @@ function user_meta_simple_register() {
 			jQuery('#tick').hide(); jQuery('#cross').hide();
 			jQuery("#msgbox").css({'border': '1px #ffc solid','color': '#c93'}).text('Checking...').fadeIn('fast');
 			//check the username exists or not from ajax
-			jQuery.post(root+'/wp-content/plugins/tng_user_meta/user_availability.php',{ userlogin:jQuery(this).val() } ,function(data)
+			jQuery.post(root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/user_availability.php',{ userlogin:jQuery(this).val() } ,function(data)
 			{
 			  if(data=='no') //if username not avaiable
 			  {
@@ -66,7 +66,7 @@ function user_meta_simple_register() {
 			jQuery('#tick2').hide(); jQuery('#cross2').hide();
 			jQuery("#msgbox2").css({'border': '1px #ffc solid','color': '#c93'}).text('Checking...').fadeIn('fast');
 			//check the user email exists or not from ajax
-			jQuery.post(root+'/wp-content/plugins/tng_user_meta/email_availability.php',{ user_email:jQuery(this).val() } ,function(data)
+			jQuery.post(root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/email_availability.php',{ user_email:jQuery(this).val() } ,function(data)
 			{
 			  if(data=='no') //if user email not avaiable
 			  {
@@ -121,6 +121,12 @@ function user_meta_simple_register() {
 				}
 			});
 		});
+		jQuery("#captcha_form").validate({
+			submitHandler: function(form) {
+				if ( jQuery('#status').text().match('Captcha validation succcessful') ) 
+					form.submit();
+			}
+		});
 		</script>
 		<script type="text/javascript">	
 		jQuery(document).ready(function(){
@@ -146,7 +152,7 @@ function user_meta_simple_register() {
 			jQuery('#user_email').valid8({
 				'regularExpressions': [
 					{ expression: /^.+$/, errormessage: 'Email is required'},
-					{ expression:  /^([a-zA-Z0-9]+[\.|_|\-|£|$|%|&]{0,1})*[a-zA-Z0-9]{1}@([a-zA-Z0-9]+[\.|_|\-|£|$|%|&]{0,1})*([\.]{1}([a-zA-Z]{2,4}))$/
+					{ expression:  /^([a-zA-Z0-9]+[\.|_|\-|ï¿½|$|%|&]{0,1})*[a-zA-Z0-9]{1}@([a-zA-Z0-9]+[\.|_|\-|ï¿½|$|%|&]{0,1})*([\.]{1}([a-zA-Z]{2,4}))$/
 , errormessage: 'Not a valid email'},
 				]
 			});
@@ -177,7 +183,6 @@ function user_meta_simple_register() {
 					}
 				]
 			});
-
 		});
 		function pwdStrength(password)
 			{
@@ -202,19 +207,49 @@ function user_meta_simple_register() {
 					document.getElementById("passwordDescription").innerHTML = desc[score];
 					document.getElementById("passwordStrength").className = "strength" + score;
 			}
+		
 	</script>
-	    <script type="text/javascript">
-			jQuery(document).ready(function(){
-				var root = "<?php bloginfo('wpurl') ?>";
-				// More complex call
-				jQuery('.QapTcha').QapTcha({
-					autoSubmit : false,
-					autoRevert : true,
-					PHPfile : root+'/wp-content/plugins/tng_user_meta/Qaptcha.jquery.php'
-				});
-			});
-		</script>
-	<form action="<?php echo WP_PLUGIN_URL; ?>/tng_user_meta/simple_registration_processor.php" method="post" id="register" name="register">
+    <script type="text/javascript">
+		function myfun(value)
+		{
+		var root = "<?php bloginfo('wpurl') ?>";  
+		if (window.XMLHttpRequest)
+		  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp=new XMLHttpRequest();
+		  }
+		else
+		  {// code for IE6, IE5
+		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  }
+		xmlhttp.onreadystatechange=function()
+		  {
+		  
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				
+				//alert(xmlhttp.responseText);
+			document.getElementById("status").innerHTML=xmlhttp.responseText;
+		   
+			
+			}
+		  }
+		  //alert(document.getElementById("txtHint").innerHTML);
+		xmlhttp.open("GET", root+"/wp-content/plugins/tngwp_frontend_user_functions/assets/captcha/captcha_ajax.php?captcha="+value,true);			
+		xmlhttp.send();
+			//alert(xmlhttp.responseText);
+			//jQuery("input[type=submit]").prop("disabled", false);
+		}
+		
+		function click_refresh()
+		{
+			var root = "<?php bloginfo('wpurl') ?>";
+			document.getElementById('captcha').src=root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/captcha/captcha.php?'+Math.random();
+			document.getElementById('captcha_form').focus();
+			document.getElementById('status').innerHTML="";
+			document.getElementById('captcha_form').value="";
+		}
+	</script>
+	<form action="<?php echo WP_PLUGIN_URL; ?>/tngwp_frontend_user_functions/assets/simple_registration_processor.php" method="post" id="register" name="register">
 	<fieldset>
 		<legend>Your Information</legend>
 		<p>An <strong>*</strong> indicates a <strong>Required</strong> field.</p>
@@ -290,7 +325,7 @@ function user_meta_simple_register() {
 					<input class="required login" type="Text" name="userlogin" id="userlogin" />
 				</td>
 				<td>
-					<img id="tick" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tng_user_meta/images/tick.png" width="16" height="16"/><img id="cross" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tng_user_meta/images/cross.png" width="16" height="16"/><span id="msgbox"></span>
+					<img id="tick" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/tick.png" width="16" height="16"/><img id="cross" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/cross.png" width="16" height="16"/><span id="msgbox"></span>
 					Usernames cannot begin with a number and should not contain any punctuation characters (no . , : ; ' " ! \ / [ ] { } + - )
 				</td>
 			</tr>
@@ -302,7 +337,7 @@ function user_meta_simple_register() {
 					<input class="required" type="text" name="user_email" id="user_email" />
 				</td>
 				<td>
-					<img id="tick2" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tng_user_meta/images/tick.png" width="16" height="16"/><img id="cross2" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tng_user_meta/images/cross.png" width="16" height="16"/><span id="msgbox2"></span>
+					<img id="tick2" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/tick.png" width="16" height="16"/><img id="cross2" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/cross.png" width="16" height="16"/><span id="msgbox2"></span>
 				</td>
 			</tr>
 			<tr>
@@ -343,22 +378,23 @@ function user_meta_simple_register() {
 	<fieldset>
 		<legend>Additional Information</legend>
 		<?php
-			$tng_folder = get_option('mbtng_path');
-			chdir($tng_folder);
-			include('begin.php');
-			mbtng_db_connect() or exit;
-			$treeselect = "SELECT gedcom, treename FROM tng_trees ORDER BY treename";
-			$treequery = mysql_query($treeselect) or die ("Cannot execute query");
-			$treeresult = mysql_fetch_array($treequery);
-			$tree = $treeresult['gedcom'];
-			$treename = $treeresult['treename'];
+		$tng_folder = get_option('mbtng_path');
+		include($tng_folder."subroot.php");
+		include($tng_folder."config.php");
+		include($tng_folder."getlang.php");
+		$link = mysqli_connect($database_host, $database_username, $database_password, $database_name) or die("Error: TNG is not communicating with your database. Please check your database settings and try again.");
+		$treeselect = "SELECT gedcom, treename FROM tng_trees ORDER BY treename";
+		$treequery = mysqli_query($link, $treeselect) or die ("Cannot execute query");
+		$treeresult = mysqli_fetch_array($treequery);
+		$tree = $treeresult['gedcom'];
+		$treename = $treeresult['treename'];
+		mysqli_free_result($treequery);
 		?>
 		<br /><label for="tree">Please select your family tree:
 		<select id="tree" name="tree">
 			<option value="">&nbsp;</option>
 			<?php echo "<option value=\"$tree\">$treename</option>"; ?>
 		</select></label>Note: To request a new tree, leave this blank and give details in the next field.<br />
-		<?php mbtng_close_tng_table();?>
 		<br /><label for="interest">What is your interest in this Family Tree?</label>
 		<br /><textarea cols="75" rows="5" name="interest" id="interest"></textarea>
 		<br /><br />
@@ -369,25 +405,22 @@ function user_meta_simple_register() {
 		<br /><textarea cols="75" rows="5" name="comments" id="comments"></textarea>
 	</fieldset>
 	<br />
-	<div class="QapTcha"></div>
-	<?php
-		// check if $_SESSION['qaptcha_key'] created with AJAX exists
-		if(isset($_SESSION['qaptcha_key']) && !empty($_SESSION['qaptcha_key']))
-		{
-			$myVar = $_SESSION['qaptcha_key'];
-			
-			// check if the random input created exists and is empty
-			if(isset($_POST[''.$myVar.'']) && empty($_POST[''.$myVar.'']))
-			{
-				//mail can be sent
-			}
-			else
-			{
-				//mail can not be sent
-			}
-		}
-		unset($_SESSION['qaptcha_key']);
-	?>
+	<fieldset>
+        <legend>Verification</legend>
+        <div onload="document.getElementById('captcha_form').focus()">
+        <table border="1" cellpadding="0" cellspacing="0" style="width: 90%; margin: 0 auto;">
+            <tr>
+                <td class="label">Security Text:</td>
+                <td class="input"><input class="required" type="text" name="captcha" id="captcha_form" onkeyup="myfun(this.value)" /><br/></td>
+                <td><img src="<?php echo WP_PLUGIN_URL; ?>/tngwp_frontend_user_functions/assets/captcha/captcha.php" id="captcha" /><br/></td>
+                <td><a href="javascript:void(0)" onclick="click_refresh()" id="change-image"><img src="<?php echo WP_PLUGIN_URL; ?>/tngwp_frontend_user_functions/assets/captcha/ajax-refresh-icon.png" alt="captcha validation" /></a></td>
+            </tr>
+            <tr>
+                <td colspan="4" align="center">Validation Status: <div id="status"></div></td>
+            </tr>
+        </table>
+        </div>
+    </fieldset>
 	<p style="clear: both;"></p>
 	<p style="clear: both;">
 	<input type="submit" name="submit" id="submit" value="Submit User Registration" />
@@ -398,5 +431,5 @@ function user_meta_simple_register() {
 	ob_end_clean();
 	return $simple_registration_form;
 }
-add_shortcode('simple_registration_form', 'user_meta_simple_register');
+add_shortcode('simple_registration_form', 'tngwp_simple_registration');
 ?>

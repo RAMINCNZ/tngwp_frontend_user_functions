@@ -12,7 +12,7 @@ global $current_user, $user_id, $error, $profileuser, $nonce;
     }
 */
 
-function tng_frontend_profile(){
+function tngwp_frontend_profile(){
 ob_start();
 //If user isn't logged in, display message and login form
 if ( !is_user_logged_in() ) {
@@ -110,7 +110,7 @@ wp_create_nonce('update_user_'.$user_id);
 		<td class="name"><label for="user_login"><?php _e('Username'); ?></label>
 		<input type="text" name="user_login" id="user_login" value="<?php echo esc_attr($profileuser->user_login); ?>" disabled="disabled" class="regular-text" /> <br /><span class="description"><?php _e('Usernames cannot be changed.'); ?></span></td>
 		<td class="name"><label for="nickname"><?php _e('Nickname'); ?> <span class="required"><?php _e('(required)'); ?></span></label>
-		<input type="text" name="nickname" id="nickname" value="<?php echo esc_attr($profileuser->nickname) ?>" class="regular-text" /></br /><span class="description"><?php _e('Default: FirstName LastName. Field cannot be blank.'); ?></span></td>
+		<input type="text" name="nickname" id="nickname" value="<?php echo esc_attr($profileuser->nickname) ?>" class="regular-text" /><br /><span class="description"><?php _e('Default: FirstName LastName. Field cannot be blank.'); ?></span></td>
 	</tr>
 
 <?php
@@ -285,7 +285,7 @@ if ( $show_password_fields ) :
 	return $form;
 }
 }
-add_shortcode('tng_profile', 'tng_frontend_profile');
+add_shortcode('frontend_profile', 'tngwp_frontend_profile');
 
 /*******************************************
 Process changes to profile
@@ -295,7 +295,7 @@ $changesSaved = 'no';
 $changesSavedNoMatchingPass = 'no';
 $changesSavedNoPass = 'no';
 
-function tng_frontend_profile_save_password(){
+function tngwp_frontend_profile_save_password(){
 	global $changesSaved;
 	global $changesSavedNoMatchingPass;
 	global $changesSavedNoPass;
@@ -318,7 +318,7 @@ function tng_frontend_profile_save_password(){
 		}	
 	}
 }
-add_action('init', 'tng_frontend_profile_save_password');
+add_action('init', 'tngwp_frontend_profile_save_password');
 
 /* If profile was saved, update profile. */
 if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'update-user' ) {
@@ -347,11 +347,13 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 	);
 	wp_update_user($userdata);
 	
-	foreach(get_user_address_profile_list() as $key => $value) {
-		update_user_meta( $user_id, $key, $_POST[$key] );
-	}
-	foreach(get_user_relationship_profile_list() as $key => $value) {
-		update_user_meta( $user_id, $key, $_POST[$key] );
+	function tngwp_frontend_profile_save_custom_fields(){
+		foreach(get_user_address_profile_list() as $key => $value) {
+			update_user_meta( $user_id, $key, $_POST[$key] );
+		}
+		foreach(get_user_relationship_profile_list() as $key => $value) {
+			update_user_meta( $user_id, $key, $_POST[$key] );
+		}
 	}
 }
 ?>

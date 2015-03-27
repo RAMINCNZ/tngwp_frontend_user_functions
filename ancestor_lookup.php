@@ -1,9 +1,10 @@
 <?php
 function searchnewaccount() {
 	$tng_folder = get_option('mbtng_path');
-	chdir($tng_folder);
-	include_once('begin.php');
-	mbtng_db_connect() or exit;
+	include($tng_folder."subroot.php");
+	include($tng_folder."config.php");
+	include($tng_folder."getlang.php");
+	$link = mysqli_connect($database_host, $database_username, $database_password, $database_name) or die("Error: TNG is not communicating with your database. Please check your database settings and try again.");
 $form = '
 <form style="margin: 0 auto; text-align: center;" name="getSurnames" method="post" action="">
 	<label for="first">First Name</label>
@@ -22,9 +23,9 @@ $form = '
 ';
 ob_start();
 if (isset($_POST['submit'])) {
-	$first = mysql_real_escape_string(stripslashes($_POST['first']));
-	$last = mysql_real_escape_string(stripslashes($_POST['last']));
-	$id =mysql_real_escape_string(stripslashes($_POST['idea']));
+	$first = mysqli_real_escape_string($link, stripslashes($_POST['first']));
+	$last = mysqli_real_escape_string($link, stripslashes($_POST['last']));
+	$id =mysqli_real_escape_string($link, stripslashes($_POST['idea']));
 	$real=format_pid( $id );
 	if( !empty( $real ))  // retrieve personID from all trees
 		$query = "SELECT * FROM $people_table WHERE personID='$real' ORDER BY lastname, firstname ";
@@ -33,7 +34,7 @@ if (isset($_POST['submit'])) {
 	else if (!empty( $last ) )
 		$query = "SELECT * FROM $people_table WHERE lastname LIKE '%$last%' ORDER BY lastname, firstname ";
 	else if (!empty( $first ) )
-		$query = "SELECT * FROM $people_table WHERE firstname LIKE '%$last%' ORDER BY lastname, firstname ";
+		$query = "SELECT * FROM $people_table WHERE firstname LIKE '%$first%' ORDER BY lastname, firstname ";
 	else
 		$query = ""; 
 }
@@ -41,8 +42,8 @@ if (isset($_POST['submit'])) {
 /// if there is a query, process it 
 if( !empty( $query ) ) {
 
-	$result = mysql_query($query) or die (mysql_error());
-	$count = mysql_num_rows ($result);
+	$result = mysqli_query($link, $query) or die (mysqli_error());
+	$count = mysqli_num_rows ($result);
 	if (!$count )
 		echo "<p class=\"warning\">No Results. Try using Last Name only or partial Last Name.</p>".$form;
 	else { // we have database records
@@ -56,20 +57,20 @@ if( !empty( $query ) ) {
 		<td class=\"fieldnameback\"><span class=\"fieldname\"><strong>Select This Person</strong></span></td>
 		</tr>
 		";
-	while ( $fetch = mysql_fetch_array($result)) {
+	while ( $fetch = mysqli_fetch_array($result)) {
         $name = $fetch['firstname']." ".$fetch['lastname'];
 		$birthdate = $fetch['birthdate'];
 		$deathdate = $fetch['deathdate'];
-         if( $fetch['living'] != 0 ) {
-			 $birthdate = "";
-       		 }
+        if( $fetch['living'] != 0 ) {
+			$birthdate = "";
+    	}
 
          $id = $fetch['personID'];
-		 $page = get_option('user_meta_registration_page');
-
-         $a = "/".$page."?id=".$id;
-         $href = "<a href=\"".get_permalink($page)."?id=".$id."\">Select</a>";
-         $mytable = $mytable . "<tr><td class=\"databack\"><span class=\"normal\">$id </span></td>
+		$options = get_option('tngwp-frontend-user-functions-options');
+		$page = $options['registration_form'];
+		$permalink = get_permalink( get_page_by_title( $page ) );
+        $href = "<a href=\"".$permalink."?id=".$id."\">Select</a>";
+        $mytable = $mytable . "<tr><td class=\"databack\"><span class=\"normal\">$id </span></td>
 		<td class=\"databack\"><span class=\"normal\">$name</span></td>
 		<td class=\"databack\"><span class=\"normal\">$birthdate</span></td>
 		<td class=\"databack\"><span class=\"normal\">$deathdate</span></td>
@@ -90,7 +91,7 @@ else {
 
 	return $searchform;
 }
-add_shortcode('tng_lookup_ancestor', 'searchnewaccount');
+add_shortcode('lookup_ancestor', 'searchnewaccount');
 
 function format_pid ($pid) {
 	$pid = ucfirst (str_replace (" ", "", $pid));
