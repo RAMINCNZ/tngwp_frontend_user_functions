@@ -5,13 +5,6 @@ require_once(ABSPATH.'/wp-admin/includes/user.php');
 require_once(ABSPATH.'/wp-includes/pluggable.php');
 global $current_user, $user_id, $error, $profileuser, $nonce;
 
-    /* Redirect so the page will show updated info. 
-    if ( !$error ) {
-        echo '<meta http-equiv="refresh" content="0; URL='.$_SERVER["REQUEST_URI"].'"/>';
-		exit;
-    }
-*/
-
 function tngwp_frontend_profile(){
 ob_start();
 //If user isn't logged in, display message and login form
@@ -31,6 +24,7 @@ $user_id = $current_user->ID;
 $profileuser = get_userdata($user_id);
 //$wp_http_referer = wp_referer_field( );
 wp_create_nonce('update_user_'.$user_id);
+
 ?>
 		<script type="text/javascript">	
 		jQuery(document).ready(function(){
@@ -83,20 +77,21 @@ wp_create_nonce('update_user_'.$user_id);
 <?php if ( !'IS_PROFILE_PAGE' && is_super_admin( $profileuser->ID ) && current_user_can( 'manage_network_options' ) ) { ?>
 	<div class="updated"><p><strong><?php _e('Important:'); ?></strong> <?php _e('This user has super admin privileges.'); ?></p></div>
 <?php } ?>
-<?php if ( isset($_GET['updated']) ) : ?>
+<?php if ( isset($_GET['update_user']) ) { ?>
 <div id="message" class="updated">
-	<?php if ( 'IS_PROFILE_PAGE' ) : ?>
-	<p><strong><?php _e('Profile updated.') ?></strong></p>
-	<?php else: ?>
-	<p><strong><?php _e('User updated.') ?></strong></p>
-	<?php endif; ?>
+	<p><strong><?php echo _e('Profile updated.'); ?></strong></p>
 </div>
-<?php endif; ?>
-<?php if ( isset( $errors ) && is_wp_error( $errors ) ) : ?>
-<div class="error"><p><?php echo implode( "</p>\n<p>", $errors->get_error_messages() ); ?></p></div>
-<?php endif; ?>
+<?php } ?>
 
-<form id="your-profile" action="" method="post"<?php do_action('update_user'); ?>>
+<?php
+$errors = array();
+if (count($errors) > 0) {
+	echo '<ul>';
+	foreach ($errors as $error) { echo '<li class"error">'.$error.'</li>'; }
+	echo '</ul>';
+} ?>
+
+<form id="your-profile" action="<?php do_action('update_user'); ?>" method="post">
 <?php wp_nonce_field('update_user_'.$user_id) ?>
 
 <input type="hidden" name="from" value="profile" />
@@ -295,65 +290,62 @@ $changesSaved = 'no';
 $changesSavedNoMatchingPass = 'no';
 $changesSavedNoPass = 'no';
 
-function tngwp_frontend_profile_save_password(){
-	global $changesSaved;
-	global $changesSavedNoMatchingPass;
-	global $changesSavedNoPass;
-	$current_user = wp_get_current_user();
-	$user_id = $current_user->ID;
-	$profileuser = get_userdata($user_id);
-//	$wp_http_referer = wp_referer_field( );
-
-	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'update-user' ) { 
-		/* Update user password. */
-		if ( !empty($_POST['pass1'] ) && !empty( $_POST['pass2'] ) ){
-			if ( $_POST['pass1'] == $_POST['pass2'] ){
-				wp_update_user( array( 'ID' => $current_user->id, 'user_pass' => esc_attr( $_POST['pass1'] ) ) );
-				$changesSaved = 'yes';
-			} else {
-				$changesSavedNoMatchingPass = 'yes'; 
-			}
-		}elseif (( empty($_POST['pass1'] ) && !empty( $_POST['pass2'] )) || ( !empty($_POST['pass1'] ) && empty( $_POST['pass2'] )) ) {
-			$changesSavedNoPass = 'yes';
-		}	
-	}
-}
-add_action('init', 'tngwp_frontend_profile_save_password');
-
 /* If profile was saved, update profile. */
-if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'update-user' ) {
-	$current_user = wp_get_current_user();
-	$user_id = $current_user->ID;
-	$error='';
-	if ( empty( $_POST['nickname'] ) )
-		$error = __('This field cannot be empty. Please choose a nickname.', 'profile');
+function tngwp_frontend_profile_update_user(){
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'update-user' ) {
+		$current_user = wp_get_current_user();
+		$user_id = $current_user->ID;
+		if ( empty( $_POST['nickname'] ) )
+			$errors['nickname'] = _e('This field cannot be empty. Please choose a nickname.', 'profile');
 		
-	$userdata = array(
-		'ID' => $user_id,
-		'first_name'	=> $_POST['first_name'],
-		'last_name'	=> $_POST['last_name'],
-		'nickname'	=> $_POST['nickname'],
-		'display_name' => $_POST['display_name'],
-		'description'	=> $_POST['description'],
-		'user_url'		=> $_POST['url'],
-		'user_email'	=> $_POST['email'],
-		'aim'			=> $_POST['aim'],
-		'yim'			=> $_POST['yim'],
-		'jabber'		=> $_POST['jabber'],
-		'telephone'	=> $_POST['telephone'],
-		'facebook'	=> $_POST['facebook'],
-		'twitter'		=> $_POST['twitter'],
-		'linkedin'		=> $_POST['linkedin']
-	);
-	wp_update_user($userdata);
-	
-	function tngwp_frontend_profile_save_custom_fields(){
+		$pass1 = '';
+		$pass2 = '';
+		if ( isset( $_POST['pass1'] ) ) {
+			$pass1 = trim( $_POST['pass1'] );
+		}
+		if ( isset( $_POST['pass2'] ) ) {
+			$pass2 = trim( $_POST['pass2'] );
+		}
+		// Checking the password has been typed twice the same.
+		if ( ( $update || !empty( $pass1 ) ) && $pass1 != $pass2 ) {
+			$errors['pass'] = _e('Passwords do not match. Please enter the same password in both password fields.', 'profile');
+		}
+
+		if ( ! empty( $pass1 ) ) {
+			$user_pass = $pass1;
+		}
+			
+		$userdata = array (
+			'ID'			=> $user_id,
+			'user_pass'		=> $pass1,
+			'user_url'		=> $_POST['url'],
+			'user_email'	=> $_POST['email'],
+			'display_name'	=> $_POST['display_name'],
+			'nickname'		=> $_POST['nickname'],
+			'first_name'	=> $_POST['first_name'],
+			'last_name'		=> $_POST['last_name'],
+			'description'	=> $_POST['description'],
+			'facebook'		=> $_POST['facebook'],
+			'twitter'		=> $_POST['twitter'],
+			'linkedin'		=> $_POST['linkedin'],
+			'phone'			=> $_POST['phone'],
+			'address'		=> $_POST['address'],
+			'city'			=> $_POST['city'],
+			'state_prov'	=> $_POST['state_prov'],
+			'postalcode'	=> $_POST['postalcode'],
+			'country'		=> $_POST['country'],
+			'relative'		=> $_POST['relative'],
+			'relationahip'	=> $_POST['relationahip']
+		);
+		wp_update_user($userdata);
+		
 		foreach(get_user_address_profile_list() as $key => $value) {
 			update_user_meta( $user_id, $key, $_POST[$key] );
 		}
 		foreach(get_user_relationship_profile_list() as $key => $value) {
 			update_user_meta( $user_id, $key, $_POST[$key] );
-		}
+			}
 	}
 }
+add_action('update_user', 'tngwp_frontend_profile_update_user');
 ?>
