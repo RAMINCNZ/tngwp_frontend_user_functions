@@ -3,18 +3,18 @@
 /**
  * Plugin Name: TNG-WP Frontend User Functions
  *
- * Description: This plugin adapts the WordPress User Profile to accommodate additional TNG information for use with custom registration forms. It provides shortcodes to display two levels of user registration, a front-end profile page, and a one-line login form to place in a template. There is also a sidebar login/logout widget. New registrations are are seamlessly integrated with TNG. Version 3.0 updates the plugin to provide additional functions for integrated login/logout and deleting users without requiring the default TNG WordPress plugin. 
+ * Description: This plugin adapts the WordPress User Profile to accommodate additional TNG information for use with custom registration forms. It provides shortcodes to display two levels of user registration, a front-end profile page, a login-form, and a reset password form. There is also a sidebar login/logout widget. New registrations are are seamlessly integrated with TNG. The login form (either shortcode or widget) will log the user in to both WordPress and TNG.
  *
- * Plugin URI: http://www.uniquelyyourshosting.net/
- * Version: 3.0
+ * Plugin URI: https://www.uniquelyyourshosting.net/
+ * Version: 4.0
  *         
  * Author: Heather Feuerhelm
- * Author URI: http://www.uniquelyyourshosting.com/
+ * Author URI: https://www.uniquelyyourshosting.com/
  * License: GPLv2
  * @package tngwp_frontend_user_functions
  *
  * This plugin used the Object-Oriented Plugin Template Solution as a skeleton
- * Plugin URI: http://www.uniquelyyourshosting.net
+ * Plugin URI: https://www.uniquelyyourshosting.net
  */
 
 /**
@@ -373,7 +373,7 @@ include('assets/custom_login_logout_functions.php');
 add_action( 'wp_enqueue_scripts', 'tng_user_meta_add_my_stylesheet' );
 function tng_user_meta_add_my_stylesheet() {
 	// Respects SSL, Style.css is relative to the current file
-	wp_register_style( 'registration-style', plugins_url('assets/css/styles.css', __FILE__) );
+	wp_register_style( 'registration-style', plugins_url('assets/css/wptng_styles.css', __FILE__) );
 	wp_enqueue_style( 'registration-style' );
 	wp_register_style( 'tng_profile', plugins_url('assets/css/tng_profile.css', __FILE__) );
 	wp_enqueue_style( 'tng_profile' );
@@ -382,7 +382,6 @@ function tng_user_meta_add_my_stylesheet() {
 add_action('wp_enqueue_scripts', 'tng_user_meta_scripts');
 function tng_user_meta_scripts() {
 	wp_enqueue_script('processAncestor', plugins_url('tngwp_frontend_user_functions/assets/js/processAncestor.js'), '', '1.0', true);
+	wp_enqueue_script('validate_registration', plugins_url('tngwp_frontend_user_functions/assets/js/validate_registration.js'), '', '1.0', true);
 	wp_enqueue_script('validate-inline', plugins_url('tngwp_frontend_user_functions/assets/js/jquery.valid8.js'), 'jquery', '1.3', true);
-	wp_enqueue_script('validate', plugins_url('tngwp_frontend_user_functions/assets/js/jquery.validate.js'), 'jquery', '1.9', true);
-	wp_enqueue_script('validate-language', plugins_url('tngwp_frontend_user_functions/assets/js/additional-methods.js'), 'jquery', '1.9', true);
 }
