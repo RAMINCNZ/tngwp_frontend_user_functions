@@ -1,41 +1,44 @@
 <?php
 function tngwp_simple_registration() {
 //	session_start();
+	include('/assets/css/style.css');
 	ob_start();
 	?>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
 	<script language="javascript">
 	//<!---------------------------------+
 	//  Developed by Roshan Bhattarai, adapted by Heather Feuerhelm 
 	//  Visit http://roshanbh.com.np for this script and more.
+	//  This script checks the WordPress database for existing username.
 	//  This notice MUST stay intact for legal use
 	// --------------------------------->
 	jQuery(document).ready(function()
 	{
-		jQuery("#userlogin").blur(function()
+		jQuery("#user_login").blur(function()
 		{
 			var root = "<?php bloginfo('wpurl') ?>";
 			//remove all the class add the messagebox classes and start fading
-			jQuery('#userlogin').css('border', '1px #CCC solid');
+			jQuery('#user_login').css('border', '1px #CCC solid');
 			jQuery('#tick').hide(); jQuery('#cross').hide();
 			jQuery("#msgbox").css({'border': '1px #ffc solid','color': '#c93'}).text('Checking...').fadeIn('fast');
 			//check the username exists or not from ajax
-			jQuery.post(root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/user_availability.php',{ userlogin:jQuery(this).val() } ,function(data)
+			jQuery.post(root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/user_availability.php',{ user_login:jQuery(this).val() } ,function(data)
 			{
 			  if(data=='no') //if username not avaiable
 			  {
-				if(jQuery('#userlogin').hasClass('valid')) { jQuery('#userlogin').removeClass('valid').css({'border':'1px solid #800','color':'#800','font-weight':'bold'}); }
+				if(jQuery('#user_login').hasClass('valid')) { jQuery('#user_login').removeClass('valid').css({'border':'1px solid #800','color':'#800','font-weight':'bold'}); }
 				jQuery('#tick').hide();
 				jQuery('#cross').css('display', 'inline').fadeIn('fast');
 				jQuery("#msgbox").fadeTo(500,0.1,function() //start fading the messagebox
 				{ 
 				  //add message and change the class of the box and start fading
-				  jQuery(this).html('User name exists').css({'color': '#800','font-weight': 'bold'}).fadeTo(500,1);
+				  jQuery(this).html('User name exists or not provided').css({'color': '#800','font-weight': 'bold'}).fadeTo(500,1);
 				});		
 			  }
 			  else
 			  {
-				if(jQuery('#userlogin').hasClass('error')) { jQuery('#userlogin').removeClass('error').addClass('valid'); }
-				jQuery('#userlogin').css({'border':'1px solid #080','color':'#080','font-weight':'bold'});
+				if(jQuery('#user_login').hasClass('error')) { jQuery('#user_login').removeClass('error').addClass('valid'); }
+				jQuery('#user_login').css({'border':'1px solid #080','color':'#080','font-weight':'bold'});
 				jQuery('#cross').hide();
 				jQuery('#tick').fadeIn('fast');
 				jQuery("#msgbox").fadeTo(200,0.1,function()  //start fading the messagebox
@@ -48,16 +51,16 @@ function tngwp_simple_registration() {
 			});
 	 
 		});
-	});
+	}); 
 	</script>
 	<script language="javascript">
 	//<!---------------------------------+
 	//  Developed by Roshan Bhattarai, adapted by Heather Feuerhelm 
 	//  Visit http://roshanbh.com.np for this script and more.
+	//  This script checks the WordPress database for existing email address.
 	//  This notice MUST stay intact for legal use
 	// --------------------------------->
-	jQuery(document).ready(function()
-	{
+	jQuery(document).ready(function() {
 		jQuery("#user_email").blur(function()
 		{
 			var root = "<?php bloginfo('wpurl') ?>";
@@ -68,7 +71,7 @@ function tngwp_simple_registration() {
 			//check the user email exists or not from ajax
 			jQuery.post(root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/email_availability.php',{ user_email:jQuery(this).val() } ,function(data)
 			{
-			  if(data=='no') //if user email not avaiable
+			  if(data=='no') //if user email not avaiable or not provided
 			  {
 				if(jQuery('#user_email').hasClass('valid')) { jQuery('#user_email').removeClass('valid').css({'border':'1px solid #800','color':'#800','font-weight':'bold'}); }
 				jQuery('#tick2').hide();
@@ -76,7 +79,7 @@ function tngwp_simple_registration() {
 				jQuery("#msgbox2").fadeTo(500,0.1,function() //start fading the messagebox
 				{ 
 				  //add message and change the class of the box and start fading
-				  jQuery(this).html('This email already exists. If this is your email, please login and update your information on your profile page.').css({'color': '#800','font-weight': 'bold'}).fadeTo(500,1);
+				  jQuery(this).html('Email not provided OR this email already exists. If this is your email, please login and update your information on your profile page.').css({'color': '#800','font-weight': 'bold'}).fadeTo(500,1);
 				});		
 			  }
 			  else
@@ -97,282 +100,268 @@ function tngwp_simple_registration() {
 		});
 	});
 	</script>
-	<script type="text/javascript">	
-		jQuery().ready(function() {
-			// validate signup form on submit
-			jQuery("#register").validate({
-				rules: {
-					first_name: "required",
-					last_name: "required",
-					user_login: "required",
-					user_pass: "required",
-					confirm_pass: "required",
-					user_email: "required",
-					confirm_email: "required"
-				},
-				messages: {
-					first_name: "Please fill",
-					last_name: "Please fill",
-					user_login: "Please fill",
-					user_pass: "Please fill",
-					confirm_pass: "Please fill",
-					user_email: "Please fill",
-					confirm_email: "Please fill"
-				}
-			});
-		});
-		jQuery("#captcha_form").validate({
-			submitHandler: function(form) {
-				if ( jQuery('#status').text().match('Captcha validation succcessful') ) 
-					form.submit();
-			}
-		});
-		</script>
-		<script type="text/javascript">	
-		jQuery(document).ready(function(){
-			jQuery('#first_name').valid8('First name is required');
-			jQuery('#last_name').valid8('Last name is required');
-			jQuery('.login').valid8({
-				'regularExpressions': [
-				{ expression: /^.+$/, errormessage: 'Username is required'},	
-				{ expression: /^[a-zA-Z0-9]+$/, errormessage: 'You can only use the letters A-Z and numbers'}
-				]
-			});
-			jQuery('.date').valid8({
-				'regularExpressions': [
-				{ expression: /^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d$/, errormessage: 'Please use the format mm/dd/yyyy'}
-				]
-			});
-			function doesEmailFieldsMatch(values){
-				if(values.user_email == values.confirm_email)
-					return {valid:true}
-				else
-					return {valid:false, message:'Emails do not match'}
-			}
-			jQuery('#user_email').valid8({
-				'regularExpressions': [
-					{ expression: /^.+$/, errormessage: 'Email is required'},
-					{ expression:  /^([a-zA-Z0-9]+[\.|_|\-|�|$|%|&]{0,1})*[a-zA-Z0-9]{1}@([a-zA-Z0-9]+[\.|_|\-|�|$|%|&]{0,1})*([\.]{1}([a-zA-Z]{2,4}))$/
-, errormessage: 'Not a valid email'},
-				]
-			});
-			jQuery('#confirm_email').valid8({
-				'jsFunctions': [
-					{ function: doesEmailFieldsMatch, values: function(){
-							return { user_email: jQuery('#user_email').val(), confirm_email: jQuery('#confirm_email').val() }
-						}
-					}
-				]
-			});
-			function doesPasswordFieldsMatch(values){
-				if(values.pass == values.confirm_pass)
-					return {valid:true}
-				else
-					return {valid:false, message:'Passwords do not match'}
-			}
-			jQuery('#pass').valid8({
-				'regularExpressions': [
-					{ expression: /(?=.{7,})/, errormessage: 'Minimum length is 7' }
-				]
-			});
-			jQuery('#confirm_pass').valid8({
-				'jsFunctions': [
-					{ function: doesPasswordFieldsMatch, values: function(){
-							return { pass: jQuery('#pass').val(), confirm_pass: jQuery('#confirm_pass').val() }
-						}
-					}
-				]
-			});
-		});
-		function pwdStrength(password)
-			{
-				var desc = new Array();
-				desc[0] = "Very Weak";
-				desc[1] = "Weak";
-				desc[2] = "Better";
-				desc[3] = "Medium";
-				desc[4] = "Strong";
-				desc[5] = "Strongest";
-				var score   = 0;
-				//if password bigger than 6 give 1 point
-				if (password.length > 6) score++;
-				//if password has both lower and uppercase characters give 1 point      
-				if ( ( password.match(/[a-z]/) ) && ( password.match(/[A-Z]/) ) ) score++;
-				//if password has at least one number give 1 point
-				if (password.match(/\d{1,2}/)) score++;
-				//if password has 1-2 special caracther give 1 point
-				if ( password.match(/\!\$%&\*\?{1,2}/) ) score++;
-				//if password bigger than 9 give another 1 point
-				if (password.length > 9) score++;
-					document.getElementById("passwordDescription").innerHTML = desc[score];
-					document.getElementById("passwordStrength").className = "strength" + score;
-			}
-		
-	</script>
-    <script type="text/javascript">
-		function myfun(value)
+	<script type="module" language="javascript">
+		var strength = {
+				0: "Worst ☹",
+				1: "Bad ☹",
+				2: "Weak ☹",
+				3: "Good ☺",
+				4: "Strong ☻"
+		}
+
+		var password = document.getElementById('password');
+		var meter = document.getElementById('password-strength-meter');
+		var text = document.getElementById('password-strength-text');
+
+		password.addEventListener('input', function()
 		{
-		var root = "<?php bloginfo('wpurl') ?>";  
-		if (window.XMLHttpRequest)
-		  {// code for IE7+, Firefox, Chrome, Opera, Safari
-		  xmlhttp=new XMLHttpRequest();
-		  }
-		else
-		  {// code for IE6, IE5
-		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-		  }
-		xmlhttp.onreadystatechange=function()
-		  {
-		  
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			{
-				
-				//alert(xmlhttp.responseText);
-			document.getElementById("status").innerHTML=xmlhttp.responseText;
-		   
+			var val = password.value;
+			var result = zxcvbn(val);
 			
+			// Update the password strength meter
+			meter.value = result.score;
+		   
+			// Update the text indicator
+			if(val !== "") {
+				text.innerHTML = "Strength: " + "<strong>" + strength[result.score] + "</strong>" + "<span class='feedback'>" + result.feedback.warning + " " + result.feedback.suggestions + "</span"; 
 			}
-		  }
-		  //alert(document.getElementById("txtHint").innerHTML);
-		xmlhttp.open("GET", root+"/wp-content/plugins/tngwp_frontend_user_functions/assets/captcha/captcha_ajax.php?captcha="+value,true);			
-		xmlhttp.send();
-			//alert(xmlhttp.responseText);
-			//jQuery("input[type=submit]").prop("disabled", false);
-		}
-		
-		function click_refresh()
-		{
-			var root = "<?php bloginfo('wpurl') ?>";
-			document.getElementById('captcha').src=root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/captcha/captcha.php?'+Math.random();
-			document.getElementById('captcha_form').focus();
-			document.getElementById('status').innerHTML="";
-			document.getElementById('captcha_form').value="";
+			else {
+				text.innerHTML = "";
+			}
+		});
+	</script>
+	 <script src="https://www.google.com/recaptcha/api.js"></script>
+	<script>
+		//Part of Google reCaptcha
+		function onSubmit(token) {
+			document.getElementById("register").submit();
 		}
 	</script>
-	<form action="<?php echo WP_PLUGIN_URL; ?>/tngwp_frontend_user_functions/assets/simple_registration_processor.php" method="post" id="register" name="register">
+	<?php
+	$error_message1=""; 
+	$first_nameError=""; 
+	$last_nameError=""; 
+	$user_loginError=""; 
+	$user_emailError=""; 
+	$passwordError="";
+	if((isset($_POST['submit']))){
+		$valid = true;
+
+		if(empty($_POST['first_name'])){
+			$valid=false;
+			$first_nameError = "First name is missing".PHP_EOL;
+			$first_nameError = nl2br($first_nameError);
+		}
+		if(empty($_POST['last_name'])){
+			$valid=false;
+			$last_nameError = "Last name is missing".PHP_EOL;
+			$last_nameError = nl2br($last_nameError);
+		}
+		if(empty($_POST['user_login'])){
+			$valid=false;
+			$user_loginError = "User name is missing".PHP_EOL;
+			$user_loginError = nl2br($user_loginError);
+		}
+		if(empty($_POST['user_email'])){
+			$valid=false;
+			$user_emailError = "Email address is missing".PHP_EOL;
+			$user_emailError = nl2br($user_emailError);
+		}
+		if(empty($_POST['password'])){
+			$valid=false;
+			$passwordError = "Password is missing".PHP_EOL;
+			$passwordError = nl2br($passwordError);
+		}
+		if ($valid==false) {
+			$error_message1 = "Please correct the following errors and resubmit (don't forget to confirm your email and password):".PHP_EOL;
+			$error_message1 = nl2br($error_message1);
+		}
+		if($valid){
+			include_once(WP_PLUGIN_DIR.'/tngwp_frontend_user_functions/assets/simple_registration_processor.php');
+			tngwp_process_simple_registration();
+			exit();
+		}
+	}
+	?>
+	<form action="" method="post" id="register" name="register">
+	<div style="color:red;font-weight:bold;"><?php echo $error_message1; echo $first_nameError; echo $last_nameError; echo $user_loginError; echo $user_emailError; echo $passwordError; ?></div>
 	<fieldset>
 		<legend>Your Information</legend>
-		<p>An <strong>*</strong> indicates a <strong>Required</strong> field.</p>
-		<table>
-			<tr>
-				<td class="label">
-					<label for="first_name">First Name*</label>
-				</td>
-				<td class="input">
-					<input class="required" type="text" id="first_name" name="first_name" />
-				</td>
-				<td width="auto"><br /><br /></td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="last_name">Last Name*</label>
-				</td>
-				<td class="input">
-					<input class="required" type="Text" id="last_name" name="last_name" />
-				</td>
-				<td><br /><br /></td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="city">City</label>
-				</td>
-				<td class="input">
-					<input type="Text" id="city" name="city" />
-				</td>
-				<td><br /><br /></td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="state_prov">State/Province</label>
-				</td>
-				<td class="input">
-					<input type="Text" id="state_prov" name="state_prov" />
-				</td>
-				<td><br /><br /></td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="postalcode">Postal Code</label>
-				</td>
-				<td class="input">
-					<input type="Text" id="postalcode" name="postalcode" />
-				</td>
-				<td><br /><br /></td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="country">Country</label>
-				</td>
-				<td class="input">
-					<input type="Text" id="country" name="country" />
-				</td>
-				<td><br /><br /></td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="user_url">Your Website</label>
-				</td>
-				<td class="input">
-					<input type="Text" name="user_url" id="user_url" />
-				</td>
-				<td><br /><br /></td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="userlogin">Login Name*</label>
-				</td>
-				<td class="input">
-					<input class="required login" type="Text" name="userlogin" id="userlogin" />
-				</td>
-				<td>
-					<img id="tick" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/tick.png" width="16" height="16"/><img id="cross" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/cross.png" width="16" height="16"/><span id="msgbox"></span>
-					Usernames cannot begin with a number and should not contain any punctuation characters (no . , : ; ' " ! \ / [ ] { } + - )
-				</td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="user_email">Email Address*</label>
-				</td>
-				<td class="input">
-					<input class="required" type="text" name="user_email" id="user_email" />
-				</td>
-				<td>
-					<img id="tick2" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/tick.png" width="16" height="16"/><img id="cross2" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/cross.png" width="16" height="16"/><span id="msgbox2"></span>
-				</td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="confirm_email">Email Again*</label>
-				</td>
-				<td class="input">
-					<input class="required" type="Text" name="confirm_email" id="confirm_email" />
-				</td>
-				<td>Please make sure you are not blocking mail from the this domain to ensure email from us does not end up in a spam or junk folder.</td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="user_pass">Password*</label>
-				</td>
-				<td class="input">
-					<input type="password" class="required" name="user_pass" id="pass" onkeyup="pwdStrength(this.value)" />
-					<div id="passwordDescription">Password not entered</div>
-					<div id="passwordStrength" class="strength0"></div>
-					<br />
-				</td>
-				<td>
-					Passwords must be at least 7 characters and include Upper Case letters, lower case letters, 1-3 numbers, and 1-2 of these symbols: ?%&!
-				</td>
-			</tr>
-			<tr>
-				<td class="label">
-					<label for="confirm_pass">Password Again*</label>
-				</td>
-				<td class="input">
-					<input class="required" type="password" name="confirm_pass" id="confirm_pass" />
-				</td>
-				<td><br /><br /></td>
-			</tr>
-		</table>
+		<p>Note: Required fields are shown in <em><span style="color: #c63800;">colored</span> italic</em></p>
+		<!-- First Name Field (required) -->
+		<div class="fieldgroup">
+			<label class="required" for="first_name">First Name:  </label>
+			<input type="text" id="first_name" name="first_name" class="input" <?php if (!empty($_POST['first_name'])) {echo "value=\"" . htmlspecialchars($_POST["first_name"]) . "\"";} ?> />
+			<svg class="icon icon-success hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+			<title>check-circle</title>
+			<g fill="none">
+			  <path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+			</g>
+			</svg>
+			<svg class="icon icon-error hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+			<title>exclamation-circle</title>
+			<g fill="none">
+			  <path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+			</g>
+			</svg>
+			<div class="error-message"></div>
+		</div> <!-- End First Name Field -->
+		
+		<!-- Last Name Field (required) -->
+		<div class="fieldgroup">
+			<label class="required" for="last_name">Last Name:  </label>
+			<input type="text" id="last_name" name="last_name" class="input" <?php if (!empty($_POST['last_name'])) {echo "value=\"" . htmlspecialchars($_POST["last_name"]) . "\"";} ?> />
+			<svg class="icon icon-success hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+			<title>check-circle</title>
+			<g fill="none">
+			  <path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+			</g>
+			</svg>
+			<svg class="icon icon-error hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+			<title>exclamation-circle</title>
+			<g fill="none">
+			  <path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+			</g>
+			</svg>
+			<div class="error-message"></div>
+		</div> <!-- End Last Name Field -->
+		
+		<!-- City Field (not required) -->
+		<div class="fieldgroup">
+			<label for="city">City:  </label>
+			<input type="text" id="city" name="city" class="input" <?php if (!empty($_POST['city'])) {echo "value=\"" . htmlspecialchars($_POST["city"]) . "\"";} ?> />
+		</div>
+		
+		 <!-- State/Province Field (not required) -->
+		<div class="fieldgroup">
+			<label for="state_prov">State/Province:  </label>
+			<input type="text" id="state_prov" name="state_prov" class="input" <?php if (!empty($_POST['state_prov'])) {echo "value=\"" . htmlspecialchars($_POST["state_prov"]) . "\"";} ?> />
+		</div>
+		
+		 <!-- Postal Code Field (not required) -->
+		<div class="fieldgroup">
+			<label for="postalcode">Postal Code:  </label>
+			<input type="text" id="postalcode" name="postalcode" class="input" <?php if (!empty($_POST['postalcode'])) {echo "value=\"" . htmlspecialchars($_POST["postalcode"]) . "\"";} ?> />
+		</div>
+		
+		 <!-- Country Field (not required) -->
+		<div class="fieldgroup">
+			<label for="country">Country:  </label>
+			<input type="text" id="country" name="country" class="input" <?php if (!empty($_POST['country'])) {echo "value=\"" . htmlspecialchars($_POST["country"]) . "\"";} ?> />
+		</div>
+		
+		<!-- Website Field (not required) -->
+		<div class="fieldgroup">
+			<label for="user_url">Your Website:  </label>
+			<input type="url" id="user_url" name="user_url" class="input" <?php if (!empty($_POST['user_url'])) {echo "value=\"" . htmlspecialchars($_POST["user_url"]) . "\"";} ?> />
+		</div>
+		
+		<!-- Login Field (required) -->
+		<div class="fieldgroup">
+			<label class="required" for="user_login">Login Name:  </label>
+			<input type="text" id="user_login" name="user_login" class="input" <?php if (!empty($_POST['user_login'])) {echo "value=\"" . htmlspecialchars($_POST["user_login"]) . "\"";} ?> />
+			<svg class="icon icon-success hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>check-circle</title>
+				<g fill="none">
+					<path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<svg class="icon icon-error hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>exclamation-circle</title>
+				<g fill="none">
+					<path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<div class="error-message"></div>
+			<img id="tick" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/tick.png" width="16" height="16"/>
+			<img id="cross" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/cross.png" width="16" height="16"/><span id="msgbox"></span>
+			<p class="field-message">Usernames cannot begin with a number and should not contain any punctuation characters (no . , : ; ' " ! \ / [ ] { } + - )</p>
+		</div> <!-- End Login Field -->
+		
+		<!-- User Email Field (required) -->
+		<div class="fieldgroup">
+			<label class="required" for="user_email">Email Address:  </label>
+			<input type="email" id="user_email" name="user_email" class="input" <?php if (!empty($_POST['user_email'])) {echo "value=\"" . htmlspecialchars($_POST["user_email"]) . "\"";} ?> />
+			<svg class="icon icon-success hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>check-circle</title>
+				<g fill="none">
+					<path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<svg class="icon icon-error hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>exclamation-circle</title>
+				<g fill="none">
+					<path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<div class="error-message"></div>
+			<img id="tick2" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/tick.png" width="16" height="16"/>
+			<img id="cross2" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/assets/images/cross.png" width="16" height="16"/><span id="msgbox2"></span>
+			<div class="field-message" style="clear:both;">Please make sure you are not blocking mail from the this domain to ensure email from us does not end up in a spam or junk folder.</div>
+		</div> <!-- End User Email Field -->
+		
+		<!-- Confirm Email Field (required) -->
+		<div class="fieldgroup">
+			<label class="required" for="confirm_email">Confirm Email:  </label>
+			<input type="email" id="confirm_email" name="confirm_email" class="input" <?php if (!empty($_POST['confirm_email'])) {echo "value=\"" . htmlspecialchars($_POST["confirm_email"]) . "\"";} ?> />
+			<svg class="icon icon-success hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>check-circle</title>
+				<g fill="none">
+					<path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<svg class="icon icon-error hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>exclamation-circle</title>
+				<g fill="none">
+					<path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<div class="error-message"></div>
+		</div> <!-- End Confirm Email Field -->
+		
+		<!-- Password Field (required) -->
+		<div class="fieldgroup">
+			<label class="label required" for"user_email">Password:  </label>
+			<input type="password" id="password" name="password" class="input" />
+			<svg class="icon icon-success hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>check-circle</title>
+				<g fill="none">
+					<path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<svg class="icon icon-error hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>exclamation-circle</title>
+				<g fill="none">
+					<path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<div class="error-message"></div>
+			<div class="field-message">
+				<meter max="4" id="password-strength-meter"></meter>
+				<div id="password-strength-text"></div>
+				Passwords must be between 12 and 20 characters and include Upper Case letters, lower case letters, 1-3 numbers, and 1-2 of these symbols: !@%$? 
+			</div>
+		</div> <!-- End Password Field -->
+		
+		<!-- Confirm Password Field (required) -->
+		<div class="fieldgroup">
+			<label class="required" for"confirm_pass">Confirm Password:  </label>
+			<input type="password" id="confirm_pass" name="confirm_pass" class="input" />
+			<svg class="icon icon-success hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>check-circle</title>
+				<g fill="none">
+					<path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<svg class="icon icon-error hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<title>exclamation-circle</title>
+				<g fill="none">
+					<path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+				</g>
+			</svg>
+			<div class="error-message"></div>
+			<div class="field-message">Please make sure you save your password in a protected location.</div>
+		</div> <!-- End Confirm Password Field -->
 	</fieldset>
 	<br />
 	<fieldset>
@@ -390,40 +379,24 @@ function tngwp_simple_registration() {
 		$treename = $treeresult['treename'];
 		mysqli_free_result($treequery);
 		?>
-		<br /><label for="tree">Please select your family tree:
+		<label for="tree" class="additionalinfo">Please select your family tree:
 		<select id="tree" name="tree">
 			<option value="">&nbsp;</option>
 			<?php echo "<option value=\"$tree\">$treename</option>"; ?>
 		</select></label>Note: To request a new tree, leave this blank and give details in the next field.<br />
-		<br /><label for="interest">What is your interest in this Family Tree?</label>
-		<br /><textarea cols="75" rows="5" name="interest" id="interest"></textarea>
+		<br /><label for="interest" class="additionalinfo">What is your interest in this Family Tree?</label>
+		<br /><textarea cols="75" rows="5" name="interest" id="interest"><?php if (!empty($_POST['interest'])) {echo "value=\"" . htmlspecialchars($_POST["interest"]) . "\"";} ?></textarea>
 		<br /><br />
-		<br /><label for="relationship">Is there someone you believe you are related to in the tree? If so, who?</label>
-		<br /><input type="Text" name="relationship" id="relationship" />
+		<br /><label for="relationship" class="additionalinfo">Is there someone you believe you are related to in the tree? If so, who?</label>
+		<br /><input type="Text" name="relationship" id="relationship" <?php if (!empty($_POST['relationship'])) {echo "value=\"" . htmlspecialchars($_POST["relationship"]) . "\"";} ?> />
 		<br /><br />
-		<label for="comments">Additional Comments:</label>
-		<br /><textarea cols="75" rows="5" name="comments" id="comments"></textarea>
+		<label for="comments" class="additionalinfo">Additional Comments:</label>
+		<br /><textarea cols="75" rows="5" name="comments" id="comments"><?php if (!empty($_POST['comments'])) {echo "value=\"" . htmlspecialchars($_POST["comments"]) . "\"";} ?></textarea>
 	</fieldset>
-	<br />
-	<fieldset>
-        <legend>Verification</legend>
-        <div onload="document.getElementById('captcha_form').focus()">
-        <table border="1" cellpadding="0" cellspacing="0" style="width: 90%; margin: 0 auto;">
-            <tr>
-                <td class="label">Security Text:</td>
-                <td class="input"><input class="required" type="text" name="captcha" id="captcha_form" onkeyup="myfun(this.value)" /><br/></td>
-                <td><img src="<?php echo WP_PLUGIN_URL; ?>/tngwp_frontend_user_functions/assets/captcha/captcha.php" id="captcha" /><br/></td>
-                <td><a href="javascript:void(0)" onclick="click_refresh()" id="change-image"><img src="<?php echo WP_PLUGIN_URL; ?>/tngwp_frontend_user_functions/assets/captcha/ajax-refresh-icon.png" alt="captcha validation" /></a></td>
-            </tr>
-            <tr>
-                <td colspan="4" align="center">Validation Status: <div id="status"></div></td>
-            </tr>
-        </table>
-        </div>
-    </fieldset>
 	<p style="clear: both;"></p>
 	<p style="clear: both;">
-	<input type="submit" name="submit" id="submit" value="Submit User Registration" />
+	<?php $options = get_option('tngwp-frontend-user-functions-options'); ?>
+	<input type="submit" class= "button" name="submit" id="submit" value="Submit User Registration" class="g-recaptcha" data-sitekey="<?php echo $options['recaptcha_sitekey']; ?>" data-callback='onSubmit' data-action='submit' />
 	</p>
 	</form>
 <?php
