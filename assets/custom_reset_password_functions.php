@@ -55,9 +55,6 @@ function tngwp_lost_password_form( $pwdreset ) {
 		//exit();
 
 		if(isset($_POST['action']) && $_POST['action'] == "tngwp_pwd_reset"){
-			/*if ( !wp_verify_nonce( $_POST['tngwp_pwd_nonce'], "tngwp_pwd_nonce")) {
-			  exit("No trick please");
-		   }*/  
 			if(empty($_POST['user_input'])) {
 				echo "<div class='error'>Please enter your Username or E-mail address</div>";
 				exit();
