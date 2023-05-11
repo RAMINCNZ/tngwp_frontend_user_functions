@@ -163,19 +163,19 @@ function tngwp_advanced_registration() {
 	// --------------------------------->
 	jQuery(document).ready(function()
 	{
-		jQuery("#userlogin").blur(function()
+		jQuery("#user_login").blur(function()
 		{
 			var root = "<?php bloginfo('wpurl') ?>";
 			//remove all the class add the messagebox classes and start fading
-			jQuery('#userlogin').css('border', '1px #CCC solid');
+			jQuery('#user_login').css('border', '1px #CCC solid');
 			jQuery('#tick').hide(); jQuery('#cross').hide();
 			jQuery("#msgbox").css({'border': '1px #ffc solid','color': '#c93'}).text('Checking...').fadeIn('fast');
 			//check the username exists or not from ajax
-			jQuery.post(root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/user_availability.php',{ userlogin:jQuery(this).val() } ,function(data)
+			jQuery.post(root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/user_availability.php',{ user_login:jQuery(this).val() } ,function(data)
 			{
 			  if(data=='no') //if username not avaiable
 			  {
-				if(jQuery('#userlogin').hasClass('valid')) { jQuery('#userlogin').removeClass('valid').css({'border':'1px solid #800','color':'#800','font-weight':'bold'}); }
+				if(jQuery('#user_login').hasClass('valid')) { jQuery('#user_login').removeClass('valid').css({'border':'1px solid #800','color':'#800','font-weight':'bold'}); }
 				jQuery('#tick').hide();
 				jQuery('#cross').css('display', 'inline').fadeIn('fast');
 				jQuery("#msgbox").fadeTo(500,0.1,function() //start fading the messagebox
@@ -186,8 +186,8 @@ function tngwp_advanced_registration() {
 			  }
 			  else
 			  {
-				if(jQuery('#userlogin').hasClass('error')) { jQuery('#userlogin').removeClass('error').addClass('valid'); }
-				jQuery('#userlogin').css({'border':'1px solid #080','color':'#080','font-weight':'bold'});
+				if(jQuery('#user_login').hasClass('error')) { jQuery('#user_login').removeClass('error').addClass('valid'); }
+				jQuery('#user_login').css({'border':'1px solid #080','color':'#080','font-weight':'bold'});
 				jQuery('#cross').hide();
 				jQuery('#tick').fadeIn('fast');
 				jQuery("#msgbox").fadeTo(200,0.1,function()  //start fading the messagebox
@@ -301,14 +301,7 @@ function tngwp_advanced_registration() {
 					required: "please fill"
 				}
 			});
-			jQuery("#captcha-form").validate({
-				submitHandler: function(form) {
-					if ( jQuery('#status').text().match('Captcha validation succcessful') ) 
-						form.submit();
-				}
-			});
-		});
-	</script>
+    </script>
 	<script type="text/javascript">	
 		jQuery(document).ready(function(){
 			jQuery('#whom').valid8('Required field');
@@ -399,43 +392,12 @@ function tngwp_advanced_registration() {
 					document.getElementById("passwordStrength").className = "strength" + score;
 			}
 	</script>
-    <script type="text/javascript">
-		function myfun(value)
-		{
-		var root = "<?php bloginfo('wpurl') ?>";  
-		if (window.XMLHttpRequest)
-		  {// code for IE7+, Firefox, Chrome, Opera, Safari
-		  xmlhttp=new XMLHttpRequest();
-		  }
-		else
-		  {// code for IE6, IE5
-		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-		  }
-		xmlhttp.onreadystatechange=function()
-		  {
-		  
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			{
-				
-				//alert(xmlhttp.responseText);
-			document.getElementById("status").innerHTML=xmlhttp.responseText;
-		   
-			
-			}
-		  }
-		  //alert(document.getElementById("txtHint").innerHTML);
-		xmlhttp.open("GET", root+"/wp-content/plugins/tngwp_frontend_user_functions/assets/captcha/captcha_ajax.php?captcha="+value,true);			
-		xmlhttp.send();
-			//alert(xmlhttp.responseText);
-			//jQuery("input[type=submit]").prop("disabled", false);
-		}
-		function click_refresh()
-		{
-			var root = "<?php bloginfo('wpurl') ?>";
-			document.getElementById('captcha').src=root+'/wp-content/plugins/tngwp_frontend_user_functions/assets/captcha/captcha.php?'+Math.random();
-			document.getElementById('captcha-form').focus();
-			document.getElementById('status').innerHTML="";
-			document.getElementById('captcha-form').value="";
+
+	<script src="https://www.google.com/recaptcha/api.js"></script>
+	<script>
+		//Part of Google reCaptcha
+		function onSubmit(token) {
+			document.getElementById("register").submit();
 		}
 	</script>
 
@@ -636,13 +598,13 @@ function tngwp_advanced_registration() {
 		</tr>
 		<tr>
 			<td>
-				<label for="userlogin">Login Name*</label>
+				<label for="user_login">Login Name*</label>
 			</td>
 			<td>
-				<input type="Text" class="required login" name="userlogin" id="userlogin" />
+				<input type="Text" class="required login" name="user_login" id="user_login" />
 			</td>
 			<td>
-				<img id="tick" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tng_user_meta/images/tick.png" width="16" height="16"/><img id="cross" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tng_user_meta/images/cross.png" width="16" height="16"/><span id="msgbox"></span>
+				<img id="tick" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/images/tick.png" width="16" height="16"/><img id="cross" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/tngwp_frontend_user_functions/images/cross.png" width="16" height="16"/><span id="msgbox"></span>
 				Usernames cannot begin with a number and should not contain any punctuation characters (no . , : ; ' " ! \ / [ ] { } + - )
 			</td>
 		</tr>
@@ -708,29 +670,11 @@ function tngwp_advanced_registration() {
 	<textarea cols="75" rows="5" name="notes" id="notes"></textarea>
 	</div>
 	</fieldset>
-		<br />
-	<fieldset>
-        <legend>Verification</legend>
-        <div onload="document.getElementById('captcha_form').focus()">
-        <table border="1" cellpadding="0" cellspacing="0" style="width: 90%; margin: 0 auto;">
-            <tr>
-                <td class="label">Security Text:</td>
-                <td class="input"><input class="required" type="text" name="captcha" id="captcha_form" onkeyup="myfun(this.value)" /><br/></td>
-                <td><img src="<?php echo WP_PLUGIN_URL; ?>/tngwp_frontend_user_functions/assets/captcha/captcha.php" id="captcha" /><br/></td>
-                <td><a href="javascript:void(0)" onclick="click_refresh()" id="change-image"><img src="<?php echo WP_PLUGIN_URL; ?>/tngwp_frontend_user_functions/assets/captcha/ajax-refresh-icon.png" alt="captcha validation" /></a></td>
-            </tr>
-            <tr>
-                <td colspan="4" align="center">Validation Status: <div id="status"></div></td>
-            </tr>
-        </table>
-        </div>
-    </fieldset>
-
 	<p style="clear: both;"></p>
-	<br />
-	<span style="position:relative;">
-	<input type="submit" id="submit" value="Submit User Registration" name="submit" />
-	</span>
+	<p style="clear: both;">
+	<?php $options = get_option('tngwp-frontend-user-functions-options'); ?>
+	<input type="submit" class= "button" name="submit" id="submit" value="Submit User Registration" class="g-recaptcha" data-sitekey="<?php echo $options['recaptcha_sitekey']; ?>" data-callback='onSubmit' data-action='submit' />
+	</p>
 	</form>
 	
 	<!-- Tell the user what happened last time through --><?php
