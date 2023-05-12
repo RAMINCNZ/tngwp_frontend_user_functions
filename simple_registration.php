@@ -372,7 +372,7 @@ function tngwp_simple_registration() {
 		include($tng_folder."config.php");
 		include($tng_folder."getlang.php");
 		$link = mysqli_connect($database_host, $database_username, $database_password, $database_name) or die("Error: TNG is not communicating with your database. Please check your database settings and try again.");
-		$treeselect = "SELECT gedcom, treename FROM tng_trees ORDER BY treename";
+		$treeselect = "SELECT gedcom, treename FROM $trees_table ORDER BY treename";
 		$treequery = mysqli_query($link, $treeselect) or die ("Cannot execute query");
 		$treeresult = mysqli_fetch_array($treequery);
 		$tree = $treeresult['gedcom'];
