@@ -32,7 +32,7 @@ msgstr ""
 
 #: classes/class-wordpress-plugin-template-settings.php:68
 #@ plugin_textdomain
-msgid "Change these settings ot customise your plugin."
+msgid "Change these settings to customise your plugin."
 msgstr ""
 
 #: classes/class-wordpress-plugin-template-settings.php:85
