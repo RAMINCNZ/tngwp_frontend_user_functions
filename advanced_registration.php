@@ -14,7 +14,7 @@ function tngwp_advanced_registration() {
 	}
 
 	//Get the relevant row from the database
-	$select = "SELECT * FROM tng_people WHERE personID='$id'";
+	$select = "SELECT * FROM $people_table WHERE personID='$id'";
 	$query = mysqli_query($link, $select);
 	$result = mysqli_fetch_array($query);
 	$first = $result['firstname'];
