@@ -65,7 +65,7 @@ if ((isset($_POST['submit']))) {
 }
 
 $wpdb->query( $wpdb->prepare(
-    "INSERT INTO tng_users (description, username, password, password_type, role, allow_living, realname, email, dt_registered) VALUES ( %s, %s, %s, %s, %s, %d, %s, %s, %s )",
+    "INSERT INTO $users_table (description, username, password, password_type, role, allow_living, realname, email, dt_registered) VALUES ( %s, %s, %s, %s, %s, %d, %s, %s, %s )",
     array(
         $real_name,
         $user_login,
